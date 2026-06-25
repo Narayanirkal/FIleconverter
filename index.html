@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Image Conversion &amp; Resize Toolkit</title>
+    <meta name="description" content="A professional, client-side toolkit to convert images to RGB565 C-array headers and resize images with high-fidelity scaling." />
+    
+    <!-- Favicon: Clean flat vector icon -->
+    <link rel="icon" type="image/svg+xml" href="Images/favicon.svg" />
+    
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <img src="Images/icon.svg" class="logo-image" alt="Toolkit Logo" />
+                <div>
+                    <h1>Image Conversion &amp; Resize Toolkit</h1>
+                    <p class="subtitle">Direct C-Array Header &amp; Resize Utility</p>
+                </div>
+            </div>
+            <div class="system-status" id="systemStatus">Ready</div>
+        </header>
+
+        <nav class="app-tabs">
+            <button class="tab-btn active" id="btnTabCArray">C-Array Converter</button>
+            <button class="tab-btn" id="btnTabResizer">Image Resizer</button>
+        </nav>
+
+        <main class="app-grid tab-content" id="carraySection">
+            <!-- Left Panel: Upload & Settings -->
+            <section class="control-panel panel">
+                <h2 class="panel-title">1. Upload Image</h2>
+                <div class="drop-zone" id="dropZone">
+                    <div class="drop-zone-content">
+                        <span class="upload-icon">📥</span>
+                        <p class="upload-text">Drag & drop your image here or <strong>browse</strong></p>
+                        <p class="upload-limits">Supports PNG, JPG, JPEG, SVG</p>
+                    </div>
+                    <input type="file" id="imageInput" accept="image/*" class="file-input" />
+                </div>
+
+                <div class="file-details" id="fileDetails" style="display: none;">
+                    <div class="detail-row">
+                        <span class="detail-label">File Name:</span>
+                        <span class="detail-val" id="fileNameText">Home.png</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Original Resolution:</span>
+                        <span class="detail-val" id="fileResolutionText">240 x 320 px</span>
+                    </div>
+                </div>
+
+                <!-- Convert button placed right below uploader details -->
+                <button class="btn btn-primary" id="btnConvert" disabled>
+                    <span>Convert to C-Array</span>
+                    <span class="btn-shine"></span>
+                </button>
+
+                <h2 class="panel-title spacer-top">2. Target Configuration</h2>
+                <div class="settings-grid">
+                    <div class="input-group">
+                        <label for="targetWidth">Width (px)</label>
+                        <input type="number" id="targetWidth" placeholder="e.g. 240" min="1" />
+                    </div>
+                    <div class="input-group">
+                        <label for="targetHeight">Height (px)</label>
+                        <input type="number" id="targetHeight" placeholder="e.g. 320" min="1" />
+                    </div>
+                    <div class="checkbox-group full-width">
+                        <input type="checkbox" id="maintainAspect" />
+                        <label for="maintainAspect">Lock aspect ratio</label>
+                    </div>
+                    <div class="input-group full-width">
+                        <label for="variableName">C Array Variable Name</label>
+                        <input type="text" id="variableName" placeholder="e.g. Home" />
+                    </div>
+                    <div class="input-group full-width">
+                        <label for="widthMacro">Width Macro Name</label>
+                        <input type="text" id="widthMacro" placeholder="e.g. HOME_WIDTH" />
+                    </div>
+                    <div class="input-group full-width">
+                        <label for="heightMacro">Height Macro Name</label>
+                        <input type="text" id="heightMacro" placeholder="e.g. HOME_HEIGHT" />
+                    </div>
+                    <div class="input-group full-width">
+                        <label for="guardName">Include Guard Prefix</label>
+                        <input type="text" id="guardName" placeholder="e.g. HOME_H" />
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Previews & Generated Code -->
+            <section class="output-panel panel">
+                <h2 class="panel-title">3. Output Preview</h2>
+                <div class="preview-container">
+                    <div class="preview-box">
+                        <span class="preview-box-title">Source Image</span>
+                        <div class="preview-wrapper" id="sourceWrapper">
+                            <span class="preview-placeholder">No image selected</span>
+                        </div>
+                    </div>
+                    <div class="preview-box">
+                        <span class="preview-box-title">Processed (RGB565 Canvas)</span>
+                        <div class="preview-wrapper" id="canvasWrapper">
+                            <span class="preview-placeholder">No preview available</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="code-output-header spacer-top">
+                    <h2 class="panel-title no-margin">4. Generated Header Code</h2>
+                    <div class="action-buttons">
+                        <button class="btn-icon" id="btnCopy" title="Copy Code" disabled>
+                            <span class="icon-span">📋</span> Copy
+                        </button>
+                        <button class="btn-icon btn-icon-accent" id="btnDownload" title="Download .h file" disabled>
+                            <span class="icon-span">💾</span> Save .h File
+                        </button>
+                    </div>
+                </div>
+
+                <div class="code-container">
+                    <textarea id="codeResult" class="code-textarea" placeholder="// C code will appear here after conversion..."></textarea>
+                </div>
+            </section>
+        </main>
+        
+        <main class="app-grid tab-content" id="resizerSection" style="display: none;">
+            <!-- Left Panel: Upload & Settings -->
+            <section class="control-panel panel">
+                <h2 class="panel-title">1. Upload Image for Resize</h2>
+                <div class="drop-zone" id="dropZoneResizer">
+                    <div class="drop-zone-content">
+                        <span class="upload-icon">📥</span>
+                        <p class="upload-text">Drag & drop your image here or <strong>browse</strong></p>
+                        <p class="upload-limits">Supports PNG, JPG, JPEG, SVG</p>
+                    </div>
+                    <input type="file" id="imageInputResizer" accept="image/*" class="file-input" />
+                </div>
+                
+                <div class="file-details" id="fileDetailsResizer" style="display: none;">
+                    <div class="detail-row">
+                        <span class="detail-label">File Name:</span>
+                        <span class="detail-val" id="resizerFileNameText"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Original Resolution:</span>
+                        <span class="detail-val" id="resizerFileResolutionText"></span>
+                    </div>
+                </div>
+
+                <!-- Resize Button placed under dropzone -->
+                <button class="btn btn-primary" id="btnResize" disabled>
+                    <span>Resize Image</span>
+                </button>
+
+                <h2 class="panel-title spacer-top">2. Resize Configuration</h2>
+                <div class="settings-grid">
+                    <div class="input-group">
+                        <label for="resizerWidth">Width (px)</label>
+                        <input type="number" id="resizerWidth" placeholder="e.g. 1386" min="1" />
+                    </div>
+                    <div class="input-group">
+                        <label for="resizerHeight">Height (px)</label>
+                        <input type="number" id="resizerHeight" placeholder="e.g. 1386" min="1" />
+                    </div>
+                    <div class="checkbox-group full-width">
+                        <input type="checkbox" id="resizerMaintainAspect" />
+                        <label for="resizerMaintainAspect">Lock aspect ratio</label>
+                    </div>
+                    <div class="input-group full-width">
+                        <label for="resizerFormat">Output Format</label>
+                        <select id="resizerFormat" style="background-color: #ffffff; border: 1px solid #bdc1c6; border-radius: 4px; padding: 0.55rem 0.75rem; font-family: var(--font-sans); font-size: 0.9rem;">
+                            <option value="image/jpeg">JPEG (.jpg)</option>
+                            <option value="image/png">PNG (.png)</option>
+                        </select>
+                    </div>
+                    <div class="input-group full-width" id="jpegQualityGroup">
+                        <label for="resizerQuality">JPEG Quality (10-100%)</label>
+                        <input type="number" id="resizerQuality" value="90" min="10" max="100" />
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Previews -->
+            <section class="output-panel panel">
+                <h2 class="panel-title">3. Previews & Download</h2>
+                <div class="preview-container">
+                    <div class="preview-box">
+                        <span class="preview-box-title">Original Image</span>
+                        <div class="preview-wrapper" id="resizerSourceWrapper">
+                            <span class="preview-placeholder">No image selected</span>
+                        </div>
+                    </div>
+                    <div class="preview-box">
+                        <span class="preview-box-title">Resized Output</span>
+                        <div class="preview-wrapper" id="resizerCanvasWrapper">
+                            <span class="preview-placeholder">No preview available</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="spacer-top" style="display: flex; justify-content: flex-end;">
+                    <button class="btn-icon btn-icon-accent" id="btnDownloadResized" disabled style="width: auto; padding: 0.75rem 1.5rem; font-size: 0.95rem;">
+                        <span class="icon-span">💾</span> Download Resized Image
+                    </button>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="app-footer">
+            <p>Image conversion and processing toolkit. Fully client-side processing.</p>
+        </footer>
+    </div>
+
+    <!-- Core Script -->
+    <script src="scripts/main.js" type="text/javascript"></script>
+</body>
+</html>
