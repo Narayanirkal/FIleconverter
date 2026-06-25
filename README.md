@@ -26,7 +26,7 @@ Converts screen bitmaps directly into 16-bit RGB565 C-style header files, halvin
 A high-fidelity image resizing tool modeled after PIL's `Image.resize` Lancet scaling.
 * **Direct Target Dimensions**: Configured with a default target resolution of `1386` × `1386` px (ideal for standard square corporate banners), fully customizable.
 * **Format Selector**: Export your resized image as a JPEG (`.jpg`) or PNG (`.png`).
-* **Quality Slider**: Adjust the compression factor (from 10% to 100%) when exporting as JPEG.
+* **Maximum Export Quality**: Automatically exports images at maximum quality (1.0 for JPEG).
 * **High-Fidelity Resampling**: Utilizes browser-native high-fidelity interpolation algorithms (`ctx.imageSmoothingQuality = 'high'`).
 * **Output Naming Conformance**: Resized downloads are automatically appended with the `_final` suffix (e.g., `banner_final.jpg`) to conform with script automation guidelines.
 
