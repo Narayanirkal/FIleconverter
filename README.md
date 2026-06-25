@@ -1,66 +1,57 @@
-# File to C array converter
-Coverts any file to a C style array.
-Useful if you want to embed a file (binary, text, image, whatever) into your code!
-Use it for your Arduino or other embedded projects.
+# Image Conversion &amp; Resize Toolkit
 
-Just select a file, specify the array format and click convert. It will give you the contents of the file in the specified format, that you can embed into your code.
-Supported formats:
- - Hex (0x00)
- - Hex with trailing slash (\x00)
- - Decimal (000)
- - Binary (B00000000)
+A clean, modern, fully client-side utility toolkit designed for developers and designers. This web application offers two distinct, high-fidelity image tools wrapped in a cohesive, responsive interface matching Google's **Material 3 (Material You)** design guidelines.
 
-## It can also do image color format and size coversion!
-If you select an image file, it will recognise it, and show you the image conversion settings panel.
- - Change palette:
-   - 32 bit RGBA (4bytes/pixel)
-   - 24bit RGB (3bytes/pixel)
-   - 16bit RRRRRGGGGGGBBBBB (2byte/pixel)
-   - 15bit RRRRRGGGGGBBBBBA (2byte/pixel)
-   - 8bit RRRGGGBB (1byte/pixel)
-   - 8bit grayscale (1byte/pixel)
-   - 1bit line art (1bit/pixel)
- - Resize the image
-   - Keep the original aspect ratio
-   - Modify the sizes freely
+Since the toolkit is built using 100% static HTML, CSS, and vanilla ES6 Javascript (with zero dependencies, no jQuery, and no build stages), it runs entirely in the browser and is ready for immediate deployment to **GitHub Pages**.
 
+---
 
-## Example
-We take Google's favicon:
+## 🛠️ Main Features
 
-![Google's favicon](https://www.google.hu/favicon.ico "Google's favicon")
+The toolkit is split into two specialized tabs:
 
-Convert it down to 16x* size (keeping the aspect ratio), 8bit grayscale, with hex output (0x..), and the result is like this:
-```c
-#define FAVICON_HEIGHT 16
-#define FAVICON_WIDTH 16
+### 1. C-Array Converter (Image to RGB565)
+Converts screen bitmaps directly into 16-bit RGB565 C-style header files, halving flash usage compared to traditional 32-bit/24-bit representation. Optimized for hardware controllers (such as the ILI9341 display buffer).
+* **Dynamic Auto-Mapping**: Automatically parses uploaded filenames to generate C variable names, guard macros, and width/height macros (e.g., `Home.png` -> `Home`, `HOME_WIDTH`, `HOME_HEIGHT`).
+* **Independent / Decoupled Scaling**: Width and height inputs are decoupled by default to match independent python script constraints, with an optional aspect-ratio lock checkbox.
+* **Pre-Quantized Preview**: Renders a pixelated canvas preview showing exactly how the 16-bit color reduction will look on the physical display before compiling.
+* **Editable Code Editor**: The output code text area is fully editable directly in the browser so you can adjust parameters before saving.
+* **Math Parity**: Uses optimized direct conversion logic:
+  $$\text{val565} = ((b \mathbin{\&} \text{0xF8}) \ll 8) \mid ((g \mathbin{\&} \text{0xFC}) \ll 3) \mid (r \gg 3)$$
+  This matches the standard BGR565 display registers.
 
-// array size is 256
-static const unsigned char favicon[] PROGMEM  = {
-  0x00, 0x00, 0x00, 0x00, 0xff, 0xfd, 0xfd, 0xfd, 0xfd, 0xfd, 0xfd, 0xff, 0x00, 0x00, 0x00, 0x00, 
-  0x00, 0x00, 0xfe, 0xfd, 0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfd, 0xfd, 0xfe, 0x00, 0x00, 
-  0x00, 0xfe, 0xfc, 0xff, 0xfa, 0xc1, 0x90, 0x79, 0x79, 0x8f, 0xc0, 0xfa, 0xff, 0xfd, 0xfe, 0x00, 
-  0x00, 0xfd, 0xff, 0xee, 0x8d, 0x76, 0x76, 0x76, 0x76, 0x76, 0x76, 0x9b, 0xff, 0xff, 0xfd, 0x00, 
-  0xff, 0xfe, 0xfa, 0x8c, 0x76, 0x7a, 0xb7, 0xdf, 0xdf, 0xb7, 0x88, 0xea, 0xff, 0xff, 0xfd, 0xf9, 
-  0xfd, 0xff, 0xca, 0x79, 0x79, 0xdf, 0xff, 0xff, 0xff, 0xff, 0xfd, 0xff, 0xff, 0xff, 0xff, 0xfd, 
-  0xfd, 0xff, 0xa8, 0x91, 0xb5, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfd, 
-  0xfd, 0xff, 0x96, 0x94, 0xdf, 0xff, 0xff, 0xff, 0x93, 0x93, 0x93, 0x93, 0x93, 0xb3, 0xff, 0xfd, 
-  0xfd, 0xff, 0x96, 0x94, 0xdf, 0xff, 0xff, 0xff, 0x93, 0x93, 0x93, 0x93, 0x93, 0xaf, 0xff, 0xfd, 
-  0xfd, 0xff, 0xa9, 0x8f, 0xb0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xb8, 0x93, 0xbd, 0xff, 0xfd, 
-  0xfd, 0xff, 0xc8, 0x69, 0x68, 0xd9, 0xff, 0xff, 0xff, 0xff, 0xe9, 0x96, 0x93, 0xdc, 0xff, 0xff, 
-  0xff, 0xfd, 0xfa, 0x7f, 0x65, 0x69, 0xac, 0xd9, 0xdb, 0xb3, 0x7e, 0x92, 0xa8, 0xfd, 0xfd, 0xf9, 
-  0x00, 0xfd, 0xff, 0xed, 0x80, 0x65, 0x65, 0x65, 0x65, 0x65, 0x65, 0x82, 0xf1, 0xff, 0xfd, 0x00, 
-  0x00, 0xfe, 0xfd, 0xff, 0xfa, 0xba, 0x84, 0x69, 0x69, 0x80, 0xb4, 0xf7, 0xff, 0xfd, 0xff, 0x00, 
-  0x00, 0x00, 0xfe, 0xfd, 0xfd, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfd, 0xfd, 0xff, 0x00, 0x00, 
-  0x00, 0x00, 0x00, 0x00, 0xf9, 0xfd, 0xfd, 0xfd, 0xfd, 0xfd, 0xff, 0xf9, 0x00, 0x00, 0x00, 0x00
-};
-```
+### 2. Image Resizer
+A high-fidelity image resizing tool modeled after PIL's `Image.resize` Lancet scaling.
+* **Direct Target Dimensions**: Configured with a default target resolution of `1386` × `1386` px (ideal for standard square corporate banners), fully customizable.
+* **Format Selector**: Export your resized image as a JPEG (`.jpg`) or PNG (`.png`).
+* **Quality Slider**: Adjust the compression factor (from 10% to 100%) when exporting as JPEG.
+* **High-Fidelity Resampling**: Utilizes browser-native high-fidelity interpolation algorithms (`ctx.imageSmoothingQuality = 'high'`).
+* **Output Naming Conformance**: Resized downloads are automatically appended with the `_final` suffix (e.g., `banner_final.jpg`) to conform with script automation guidelines.
 
+---
 
-## JSArrayTest.html
-Tests the speed of different array manipulation techniques in javascript
+## 🎨 Design Aesthetics (Material 3)
 
+The user interface follows the official **Material 3 Design System**:
+* **Dynamic Color Tokens**: Styled using M3 baseline blue (`#005faf`) as primary brand color, light gray surface cards (`#ffffff`), and soft container boundaries (`#f0f4f8` / `#c3c7cf`).
+* **Segmented Controls**: Navigation tabs are styled as a capsule Segmented Control bar with pill-shaped selection overlays.
+* **Rounded Shapes**: Capsules buttons (`100px` rounded corners), Outlined Cards (`16px` rounded corners), and text boxes (`8px` rounded corners) with M3 focus borders.
+* **Solid Colors**: Flat aesthetic with no neon colors, glows, or glassmorphic blurs, ensuring clean visibility and speed.
 
-## See it in acton here [https://notisrac.github.io/FileToCArray](https://notisrac.github.io/FileToCArray)
+---
 
+## 🚀 How to Run Locally
 
+1. Clone or download the repository.
+2. Open `index.html` in any modern web browser.
+3. No local server, `npm install`, or python environments are required!
+
+---
+
+## 📁 Project Structure
+
+* [index.html](file:///d:/FileToCArray/index.html) - Application structural layout.
+* [css/style.css](file:///d:/FileToCArray/css/style.css) - Material 3 stylesheet tokens and layouts.
+* [scripts/main.js](file:///d:/FileToCArray/scripts/main.js) - Core conversion math, tab navigation, and download handlers.
+* [Images/icon.svg](file:///d:/FileToCArray/Images/icon.svg) - Vector brand logo.
+* [Images/favicon.svg](file:///d:/FileToCArray/Images/favicon.svg) - Vector tab icon.
