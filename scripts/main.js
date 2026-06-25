@@ -28,8 +28,6 @@ let resizerWidthInput = document.getElementById('resizerWidth');
 let resizerHeightInput = document.getElementById('resizerHeight');
 let resizerMaintainAspect = document.getElementById('resizerMaintainAspect');
 let resizerFormatSelect = document.getElementById('resizerFormat');
-let resizerQualityInput = document.getElementById('resizerQuality');
-let jpegQualityGroup = document.getElementById('jpegQualityGroup');
 let btnResize = document.getElementById('btnResize');
 let btnDownloadResized = document.getElementById('btnDownloadResized');
 let dropZoneResizer = document.getElementById('dropZoneResizer');
@@ -123,16 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         updateResizerStatus();
     });
-
-    // Resizer: Format changes (show/hide JPEG Quality)
-    resizerFormatSelect.addEventListener('change', () => {
-        if (resizerFormatSelect.value === 'image/jpeg') {
-            jpegQualityGroup.style.display = 'flex';
-        } else {
-            jpegQualityGroup.style.display = 'none';
-        }
-    });
-
     btnResize.addEventListener('click', performResizing);
     btnDownloadResized.addEventListener('click', downloadResizedImage);
 
@@ -462,10 +450,8 @@ function processResizerFile(file) {
             // Autoselect format based on file extension
             if (file.type === 'image/png') {
                 resizerFormatSelect.value = 'image/png';
-                jpegQualityGroup.style.display = 'none';
             } else {
                 resizerFormatSelect.value = 'image/jpeg';
-                jpegQualityGroup.style.display = 'flex';
             }
             
             // Render original preview
@@ -516,12 +502,11 @@ function performResizing() {
     // Draw and scale the image
     ctx.drawImage(resizerImage, 0, 0, w, h);
     
-    // Get format and quality
+    // Get format
     const format = resizerFormatSelect.value;
-    const quality = parseFloat(resizerQualityInput.value) || 90;
     
-    // Export data URL
-    resizedDataUrl = canvas.toDataURL(format, format === 'image/jpeg' ? (quality / 100) : undefined);
+    // Export data URL (JPEG set to max quality 1.0)
+    resizedDataUrl = canvas.toDataURL(format, format === 'image/jpeg' ? 1.0 : undefined);
     
     // Display preview
     const canvasWrapper = document.getElementById('resizerCanvasWrapper');
