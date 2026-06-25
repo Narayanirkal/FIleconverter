@@ -17,7 +17,9 @@ Converts screen bitmaps directly into 16-bit RGB565 C-style header files, halvin
 * **Pre-Quantized Preview**: Renders a pixelated canvas preview showing exactly how the 16-bit color reduction will look on the physical display before compiling.
 * **Editable Code Editor**: The output code text area is fully editable directly in the browser so you can adjust parameters before saving.
 * **Math Parity**: Uses optimized direct conversion logic:
-  $$\text{val565} = ((b \mathbin{\&} \text{0xF8}) \ll 8) \mid ((g \mathbin{\&} \text{0xFC}) \ll 3) \mid (r \gg 3)$$
+  ```javascript
+  val565 = ((b & 0xF8) << 8) | ((g & 0xFC) << 3) | (r >> 3);
+  ```
   This matches the standard BGR565 display registers.
 
 ### 2. Image Resizer
@@ -55,3 +57,9 @@ The user interface follows the official **Material 3 Design System**:
 * [scripts/main.js](file:///d:/FileToCArray/scripts/main.js) - Core conversion math, tab navigation, and download handlers.
 * [Images/icon.svg](file:///d:/FileToCArray/Images/icon.svg) - Vector brand logo.
 * [Images/favicon.svg](file:///d:/FileToCArray/Images/favicon.svg) - Vector tab icon.
+
+---
+
+## 🔗 Links
+
+* **GitHub Repository**: [https://github.com/Narayanirkal/FIleconverter](https://github.com/Narayanirkal/FIleconverter)
